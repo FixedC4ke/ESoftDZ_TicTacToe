@@ -1,11 +1,14 @@
-const maxFieldSize = 21;
-const defaultFieldSize = 3;
-const defaultCellSize = 150;
-const crossSvg = document.querySelector("#cross");
-const circleSvg = document.querySelector("#circle");
+//Инициализация
+const maxFieldSize = 21; //максимально возможная размерность поля
+const defaultFieldSize = 3; //размер поля по умолчанию (кол-во строк/столбцов)
+const defaultCellSize = 150; //размер клетки в пикселях
+const crossSvg = document.querySelector("#cross"); //svg крестика
+const circleSvg = document.querySelector("#circle"); //svg нолика
 
 let field = document.querySelector(".game-field");
 let cell = document.querySelector(".game-field_cell");
+let circleTurn = false; //Текущий ход (true, если ходит игрок, играющий за "нолики")
+let history = []; //История ходов
 let fieldSize = defaultFieldSize;
 let cellSize = defaultCellSize;
 let resetBtn = document.querySelector(".reset-button");
@@ -19,6 +22,8 @@ circleSvg.style.width = cellSize;
 circleSvg.style.height = cellSize;
 
 let mainDiv = document.querySelector("div");
+
+//Добавление комбобокса для выбора размера поля
 let comboSize = document.createElement("select");
 comboSize.className = "reset-button";
 mainDiv.appendChild(comboSize);
@@ -30,22 +35,22 @@ option.innerHTML =
 option.selected = true;
 option.disabled = true;
 comboSize.appendChild(option);
-for (var i = 3; i <= maxFieldSize; i = i + 2) {
+for (var i = defaultFieldSize; i <= maxFieldSize; i = i + 2) {
+  //добавление вариантов размера поля от стандартного до максимального
   option = document.createElement("option");
   option.innerHTML = i;
   option.value = i;
   comboSize.appendChild(option);
 }
 
+//Добавление кнопки отмены хода
 let undoTurnBtn = document.createElement("input");
 undoTurnBtn.type = "button";
 undoTurnBtn.value = "Отменить ход";
 undoTurnBtn.className = "reset-button";
 mainDiv.appendChild(undoTurnBtn);
 
-let circleTurn = false;
-let history = [];
-
+//Функция для кастомных алертов, закрывающихся через некоторое время
 function myAlert(msg, duration) {
   var el = document.createElement("div");
   el.setAttribute(
@@ -59,6 +64,7 @@ function myAlert(msg, duration) {
   field.appendChild(el);
 }
 
+//Функция изменения размера поля + размера клеток
 function changeFieldSize(size) {
   let cellClone;
   cellSize =
@@ -78,7 +84,7 @@ function changeFieldSize(size) {
   }
 }
 
-function resetGame() {
+function resetGame() { //Новая игра
   Array.from(field.children).forEach((child) => {
     child.innerHTML = "";
     child.style.fill = "black";
@@ -89,6 +95,7 @@ function resetGame() {
 }
 
 function markCombination(indicies) {
+  //подсветить комбинацию
   indicies.forEach((index) => {
     field.children[index].style.fill = "green";
   });
