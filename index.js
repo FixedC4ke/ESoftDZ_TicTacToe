@@ -9,6 +9,7 @@ let cell = document.querySelector(".game-field_cell");
 let fieldSize = defaultFieldSize;
 let cellSize = defaultCellSize;
 let resetBtn = document.querySelector(".reset-button");
+resetBtn.value = "Новая игра";
 
 cell.style.width = cellSize;
 cell.style.height = cellSize;
@@ -16,6 +17,47 @@ crossSvg.style.width = cellSize;
 crossSvg.style.height = cellSize;
 circleSvg.style.width = cellSize;
 circleSvg.style.height = cellSize;
+
+let mainDiv = document.querySelector("div");
+let comboSize = document.createElement("select");
+comboSize.className = "reset-button";
+mainDiv.appendChild(comboSize);
+
+let option;
+option = document.createElement("option");
+option.innerHTML =
+  "Выберите размер поля (кол-во строк/столбцов, 3 по умолчанию)";
+option.selected = true;
+option.disabled = true;
+comboSize.appendChild(option);
+for (var i = 3; i <= maxFieldSize; i = i + 2) {
+  option = document.createElement("option");
+  option.innerHTML = i;
+  option.value = i;
+  comboSize.appendChild(option);
+}
+
+let undoTurnBtn = document.createElement("input");
+undoTurnBtn.type = "button";
+undoTurnBtn.value = "Отменить ход";
+undoTurnBtn.className = "reset-button";
+mainDiv.appendChild(undoTurnBtn);
+
+let circleTurn = false;
+let history = [];
+
+function myAlert(msg, duration) {
+  var el = document.createElement("div");
+  el.setAttribute(
+    "style",
+    "position:absolute;width:100%;top:50%;text-align:center;background-color:white"
+  );
+  el.innerHTML = msg;
+  setTimeout(() => {
+    field.removeChild(el);
+  }, duration);
+  field.appendChild(el);
+}
 
 function changeFieldSize(size) {
   let cellClone;
@@ -34,38 +76,6 @@ function changeFieldSize(size) {
     cellClone = cell.cloneNode();
     field.appendChild(cellClone);
   }
-}
-
-let mainDiv = document.querySelector("div");
-let comboSize = document.createElement("select");
-mainDiv.appendChild(comboSize);
-
-let option;
-for (var i = 3; i <= maxFieldSize; i = i + 2) {
-  option = document.createElement("option");
-  option.innerHTML = i;
-  option.value = i;
-  comboSize.appendChild(option);
-}
-
-comboSize.addEventListener("change", (e) => {
-  changeFieldSize(parseInt(e.target.value));
-});
-
-let circleTurn = false;
-let history = [];
-
-function myAlert(msg, duration) {
-  var el = document.createElement("div");
-  el.setAttribute(
-    "style",
-    "position:absolute;width:100%;top:50%;text-align:center;background-color:white"
-  );
-  el.innerHTML = msg;
-  setTimeout(() => {
-    field.removeChild(el);
-  }, duration);
-  field.appendChild(el);
 }
 
 function resetGame() {
@@ -116,7 +126,9 @@ function checkForWinners(turnData) {
       //если комбинация выигрышная
       markCombination(combination);
       myAlert(
-        "Winner - " + (circleTurn ? "circle" : "cross") + "! Reset in 5s...",
+        "Победитель - игрок, игравший за" +
+          (circleTurn ? '"нолики"' : '"крестики"') +
+          "! Новая игра начнется через 5 секунд...",
         5000
       );
       endGame();
@@ -124,7 +136,7 @@ function checkForWinners(turnData) {
     }
   }
   if (history.length >= fieldSize * fieldSize) {
-    myAlert("No one wins! Reset in 5s...", 5000);
+    myAlert("Ничья! Новая игра начнется через 5 секунд...", 5000);
     endGame();
   }
 }
@@ -145,3 +157,17 @@ field.addEventListener("click", (e) => {
 });
 
 resetBtn.addEventListener("click", resetGame);
+
+comboSize.addEventListener("change", (e) => {
+  changeFieldSize(parseInt(e.target.value));
+});
+
+undoTurnBtn.addEventListener("click", () => {
+  if (history.length > 0) {
+    let lastTurn = history.pop();
+    field.children[lastTurn.index].innerHTML = "";
+    circleTurn = !circleTurn;
+  } else {
+    myAlert("Еще не было сделано ни одного хода!", 1000);
+  }
+});
