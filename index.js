@@ -1,17 +1,50 @@
-const cellSize = 150;
-const fieldSize = 3;
+let field = document.querySelector(".game-field");
+let cell = document.querySelector(".game-field_cell");
+let fieldSize;
+let cellClone;
+let cellSize;
 let resetBtn = document.querySelector(".reset-button");
+const maxFieldSize = 21;
+const defaultFieldSize = 3;
+
+function changeFieldSize(size) {
+  cellSize = 150 / (size===defaultFieldSize?1:size - defaultFieldSize);
+  cell.style.width = cellSize;
+  cell.style.height = cellSize;
+  crossSvg.style.width = cellSize;
+  crossSvg.style.height = cellSize;
+  circleSvg.style.width = cellSize;
+  circleSvg.style.height = cellSize;
+  field.innerHTML = "";
+  field.style.gridTemplateColumns = `repeat(${size}, auto)`;
+  fieldSize = size;
+  for (let i = 0; i < size * size; i++) {
+    cellClone = cell.cloneNode();
+    field.appendChild(cellClone);
+  }
+}
+
+let mainDiv = document.querySelector("div");
+let comboSize = document.createElement("select");
+mainDiv.appendChild(comboSize);
+
+let option;
+for (var i = 3; i <= maxFieldSize; i = i + 2) {
+  option = document.createElement("option");
+  option.innerHTML = i;
+  option.value = i;
+  comboSize.appendChild(option);
+}
+
+comboSize.addEventListener("change", (e) => {
+  changeFieldSize(parseInt(e.target.value));
+});
 
 let crossSvg = document.querySelector("#cross");
-crossSvg.style.width = cellSize;
-crossSvg.style.height = cellSize;
 
 let circleSvg = document.querySelector("#circle");
-circleSvg.style.width = cellSize;
-circleSvg.style.height = cellSize;
 
 let circleTurn = false;
-let field = document.querySelector(".game-field");
 let history = [];
 
 function myAlert(msg, duration) {
@@ -63,13 +96,14 @@ function checkForWinners(turnData) {
     history
       .filter(
         (x) =>
-          (Math.abs(x.col - x.row) === fieldSize - 1 ||
+          (Math.abs(x.col + x.row) === fieldSize - 1 ||
             x.index === Math.floor((fieldSize * fieldSize) / 2)) &&
           x.circleTurn === circleTurn
       )
       .map((elem) => elem.index), //клетки игрока по диагонали справа налево
   ];
   for (combination of winChecks) {
+    console.log(combination, fieldSize);
     if (combination.length === fieldSize) {
       //если комбинация выигрышная
       markCombination(combination);
