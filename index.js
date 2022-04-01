@@ -121,7 +121,7 @@ function checkForWinners(turnData) {
     history
       .filter(
         (x) =>
-          (Math.abs(x.col + x.row) === fieldSize - 1 ||
+          (x.col + x.row === fieldSize - 1 ||
             x.index === Math.floor((fieldSize * fieldSize) / 2)) &&
           x.circleTurn === circleTurn
       )
