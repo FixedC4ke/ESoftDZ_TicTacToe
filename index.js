@@ -78,6 +78,7 @@ function changeFieldSize(size) {
   field.innerHTML = "";
   field.style.gridTemplateColumns = `repeat(${size}, auto)`;
   fieldSize = size;
+  history = [];
   for (let i = 0; i < size * size; i++) {
     cellClone = cell.cloneNode();
     field.appendChild(cellClone);
