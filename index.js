@@ -1,14 +1,26 @@
-let field = document.querySelector(".game-field");
-let cell = document.querySelector(".game-field_cell");
-let fieldSize;
-let cellClone;
-let cellSize;
-let resetBtn = document.querySelector(".reset-button");
 const maxFieldSize = 21;
 const defaultFieldSize = 3;
+const defaultCellSize = 150;
+const crossSvg = document.querySelector("#cross");
+const circleSvg = document.querySelector("#circle");
+
+let field = document.querySelector(".game-field");
+let cell = document.querySelector(".game-field_cell");
+let fieldSize = defaultFieldSize;
+let cellSize = defaultCellSize;
+let resetBtn = document.querySelector(".reset-button");
+
+cell.style.width = cellSize;
+cell.style.height = cellSize;
+crossSvg.style.width = cellSize;
+crossSvg.style.height = cellSize;
+circleSvg.style.width = cellSize;
+circleSvg.style.height = cellSize;
 
 function changeFieldSize(size) {
-  cellSize = 150 / (size===defaultFieldSize?1:size - defaultFieldSize);
+  let cellClone;
+  cellSize =
+    defaultCellSize / (size === defaultFieldSize ? 1 : size - defaultFieldSize);
   cell.style.width = cellSize;
   cell.style.height = cellSize;
   crossSvg.style.width = cellSize;
@@ -39,10 +51,6 @@ for (var i = 3; i <= maxFieldSize; i = i + 2) {
 comboSize.addEventListener("change", (e) => {
   changeFieldSize(parseInt(e.target.value));
 });
-
-let crossSvg = document.querySelector("#cross");
-
-let circleSvg = document.querySelector("#circle");
 
 let circleTurn = false;
 let history = [];
